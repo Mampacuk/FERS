@@ -47,9 +47,15 @@ python test.py --input_channel 200
 ## Training on HAD100
 To train your own model on the HAD100 dataset, run the following command:
 
-
+step 1:
 ```bash
-python train_step2.py
+cd train_FERD
+python train.py
+```
+
+step 2:
+```bash
+python train.py
 ```
 ## Anomaly Detection Results on HAD100
 The following table presents the mean AUC (mAUC) results achieved using different numbers of spectral bands:
