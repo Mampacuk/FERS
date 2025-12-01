@@ -21,9 +21,6 @@ Using the spectral enhancement network (FEN) as a teacher, we train a spatial–
 
 ![image](https://github.com/xjpp2016/FERS/blob/main/spa_train.png)
 
-## Abstract
-A recent class of hyperspectral anomaly detection methods that can be trained once on background datasets and then universally deployed---without per-scene retraining or parameter tuning---has demonstrated remarkable efficiency and robustness. Building upon this paradigm, we focus on the integration of spectral and spatial cues and introduce a novel "Rebellious Student" framework for complementary feature learning. Unlike conventional teacher-student paradigms driven by imitation, our method intentionally trains the spatial branch to diverge from the spectral teacher, thereby learning complementary spatial patterns that the teacher fails to capture. A two-stage learning strategy is adopted: (1) a spectral enhancement network is first trained via reverse distillation to obtain robust background spectral representations; and (2) a spatial network---the rebellious student---is subsequently optimized using decorrelation losses that enforce feature orthogonality while maintaining reconstruction fidelity to avoid irrelevant noise. Once trained, the framework enhances both spectral and spatial background features, enabling parameter-free and training-free anomaly detection when paired with conventional detectors. Extensive experiments on the HAD100 benchmark show substantial improvements over several established baselines with minimal computational overhead, confirming the effectiveness and generality of the proposed complementary learning paradigm. Our code is publicly available at https://github.com/xjpp2016/FERS.
-
 
 ## HAD100 Dataset
 HAD100: https://zhaoxuli123.github.io/HAD100/
