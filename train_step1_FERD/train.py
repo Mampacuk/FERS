@@ -22,7 +22,7 @@ def main():
 
     parser = argparse.ArgumentParser(description='hyperspectral anomaly detection')
     parser.add_argument('--device_ids', type=list, default=[0])
-    parser.add_argument('--data_path', type=str, default='./data/HAD100Dataset/')
+    parser.add_argument('--data_path', type=str, default='../data/HAD100Dataset/')
     parser.add_argument('--start_channel_id', type=int, default=0, help='the start id of spectral channel')
     parser.add_argument('--input_channel', type=int, default=50, help='the spectral channel number of input HSI')
     parser.add_argument('--img_size', type=int, default=64)

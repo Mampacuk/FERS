@@ -3,11 +3,21 @@
 **Authors**: Wenping Jin, Yuyang Tang, Li Zhu, Fei Guo
 
 ## Overview
-This repository contains the implementation for the second-stage training (i.e., training of the spatial branch based on complementary distillation) and the final fusion detection, as presented in our paper [pdf](https://arxiv.org/pdf/2510.18781) :
+This repository provides the official implementation for the training pipeline and the final fusion-based anomaly detection framework introduced in our paper [pdf](https://arxiv.org/pdf/2510.18781) :
 
 **"Rebellious Student: A Complementary Learning Framework for Background Feature Enhancement in Hyperspectral Anomaly Detection"**
 
-The first-stage training pipeline in our paper builds upon our previous work, **FERD**. The corresponding code is available at: https://github.com/xjpp2016/FERD
+Our method introduces a complementary learning paradigm that enhances background spectral and spatial representations through a novel rebellious student mechanism. The framework is composed of two sequential training stages, as illustrated below.
+
+Stage 1 — Spectral Enhancement via Reverse Distillation
+
+We employ a reverse-distillation-based pruning strategy to obtain a compact network that focuses on enhancing background spectral features.
+
+![image](https://github.com/xjpp2016/FERS/blob/main/spe_train.png)
+
+Stage 2 — Training the Spatial–Spectral Rebellious Student
+
+Using the spectral enhancement network (FEN) as a teacher, we train a spatial–spectral network that intentionally learns features complementary to the teacher, rather than imitating it.
 
 ![image](https://github.com/xjpp2016/FERS/blob/main/spa_train.png)
 
@@ -37,8 +47,9 @@ python test.py --input_channel 200
 ## Training on HAD100
 To train your own model on the HAD100 dataset, run the following command:
 
+
 ```bash
-python train.py
+python train_step2.py
 ```
 ## Anomaly Detection Results on HAD100
 The following table presents the mean AUC (mAUC) results achieved using different numbers of spectral bands:
