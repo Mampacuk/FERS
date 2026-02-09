@@ -1,11 +1,11 @@
-# Rebellious Student: A Complementary Learning Framework for Background Feature Enhancement in Hyperspectral Anomaly Detection
+# Decoupled Complementary Spectral–Spatial Learning for Background Representation Enhancement in Hyperspectral Anomaly Detection
 
 **Authors**: Wenping Jin, Yuyang Tang, Li Zhu, Fei Guo
 
 ## Overview
 This repository provides the official implementation for the training pipeline and the final fusion-based anomaly detection framework introduced in our paper [pdf](https://arxiv.org/pdf/2510.18781) :
 
-**"Rebellious Student: A Complementary Learning Framework for Background Feature Enhancement in Hyperspectral Anomaly Detection"**
+**"Decoupled Complementary Spectral–Spatial Learning for Background Representation Enhancement in Hyperspectral Anomaly Detection"**
 
 Our method introduces a complementary learning paradigm that enhances background spectral and spatial representations through a novel rebellious student mechanism. The framework is composed of two sequential training stages, as illustrated below.
 
