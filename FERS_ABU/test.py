@@ -16,25 +16,21 @@ import scipy.io as scio
 
 def main():
     parser = argparse.ArgumentParser(description='hyperspectral anomaly detection')
-    parser.add_argument('--data_path', type=str, default='./data/abu/')
-    parser.add_argument('--input_channel', type=int, default=200)
-    parser.add_argument('--img_size', type=int, default=0, help='unsused')
-    parser.add_argument('--seed', type=int, default=10, help='manual seed')
-    parser.add_argument('--sensor', type=str, default='aviris',help=' sensor used in training,  aviris_ng or aviris')
+    parser.add_argument('--data_path', type=str, default=r"C:\Users\alexa\PycharmProjects\Hyperspectral-Anomaly-Detection\background_crops_sources")
+    parser.add_argument('--input_channel', type=int, default=31)
+    parser.add_argument('--seed', type=int, default=1, help='manual seed')
     parser.add_argument('--device_ids', type=list, default=[0])
-    parser.add_argument('--detect', type=str, default='RX',help='RX, AE' )
+    parser.add_argument('--detect', type=str, default='AE',help='RX, AE' )
     parser.add_argument('--checkpoint_dir', type=str,
-                        default='./saved_models/aviris/')
+                        default=r"..\train_FERD\result\seed_10\saved_models")
     parser.add_argument('--save_dir', type=str,
-                        default='./test_result/')
+                        default='../final_result/')
     
     args = parser.parse_args()
 
-    args.save_dir = os.path.join(args.save_dir, 'abu')
+    args.save_dir = args.save_dir
     if not os.path.exists( args.save_dir):
         os.makedirs(args.save_dir)
-
-    args.checkpoint_dir = os.path.join(args.checkpoint_dir, str(args.input_channel) + 'bands/')
 
     if args.seed is None:
         args.seed = random.randint(1, 10000)
@@ -48,10 +44,10 @@ def main():
     classifier = Pixel_Classifier(input_channel=args.input_channel)
     spa_fen = HyperSpatialResNet(input_channels=args.input_channel)
 
-    convh_checkpoint = torch.load(args.checkpoint_dir + 'convh.pt', map_location=torch.device('cpu'))
-    enc_checkpoint = torch.load(args.checkpoint_dir + 'enc.pt', map_location=torch.device('cpu'))
-    pc_checkpoint = torch.load(args.checkpoint_dir + 'pc.pt', map_location=torch.device('cpu'))
-    spa_fen_checkpoint = torch.load(args.checkpoint_dir + 'spa_fen.pt', map_location=torch.device('cpu'))
+    convh_checkpoint = torch.load(os.path.join(args.checkpoint_dir, 'convh.pt'), map_location=torch.device('cpu'))
+    enc_checkpoint = torch.load(os.path.join(args.checkpoint_dir, 'enc.pt'), map_location=torch.device('cpu'))
+    pc_checkpoint = torch.load(os.path.join(args.checkpoint_dir, 'pc.pt'), map_location=torch.device('cpu'))
+    spa_fen_checkpoint = torch.load(os.path.join(args.checkpoint_dir, 'spa_fen.pt'), map_location=torch.device('cpu'))
 
     convh.load_state_dict(convh_checkpoint['state_dict'])
     encoder.load_state_dict(enc_checkpoint['state_dict'])
@@ -65,7 +61,7 @@ def main():
 
     # load test dataset
     kwargs = {'num_workers':4, 'pin_memory': True} 
-    test_dataset = HADTestDataset(dataset_path=args.data_path, resize=args.img_size, channel=args.input_channel, sensor='aviris')
+    test_dataset = HADTestDataset(dataset_path=args.data_path)
     test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=1*len(args.device_ids), shuffle=False, **kwargs)
 
     # test
@@ -88,7 +84,7 @@ def main():
     mean_AU_ROC = np.mean(AU_ROC_per_img)
     print_log('mean pixel ROCAUC: %.5f' % (mean_AU_ROC), log)
     write_eval_result(os.path.join(args.save_dir,'each_auc.txt'), test_dataset.test_img,
-                      AU_ROC_per_img, list(range(len(test_dataset.test_img))),write_mode='a')
+                      AU_ROC_per_img, list(range(len(test_dataset.test_img))))
     write_name(os.path.join(args.save_dir, 'test_list.txt'), test_dataset.test_img)
 
 
@@ -106,7 +102,7 @@ def test(args, convh, encoder, classifier, spa_fen, test_loader):
 
     idex = 1
 
-    for (data, gt) in tqdm(test_loader):
+    for (data, gt, name) in tqdm(test_loader):
 
         test_imgs.extend(data.cpu().numpy())
         gt_imgs.extend(gt.cpu().numpy())
@@ -126,7 +122,7 @@ def test(args, convh, encoder, classifier, spa_fen, test_loader):
         else:
             raise NotImplementedError
 
-        score = np.zeros([data.shape[0],data.shape[-1],data.shape[-1]])
+        score = np.zeros([data.shape[0],data.shape[-2],data.shape[-1]])
         for i in range(data.shape[0]):
             score1 = admap_lsad
             score[i, :] = score1
@@ -136,10 +132,10 @@ def test(args, convh, encoder, classifier, spa_fen, test_loader):
 
         total_time = total_time + time.time() - t1
 
-        scores_path = args.save_dir+'/scores/'
+        scores_path = os.path.join(args.save_dir, 'scores')
         if not os.path.exists(scores_path):
             os.makedirs(scores_path)
-        scio.savemat(os.path.join(scores_path, str(idex)+'score.mat'), {'result':score})
+        scio.savemat(os.path.join(scores_path, f'{name[0]}.mat'), {'show':np.squeeze(score)})
         idex = idex + 1
         scores.extend(score)
         
